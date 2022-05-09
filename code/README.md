@@ -9,12 +9,15 @@ model:
 -   *B* arbitrary, which can be selected using `model = "full"`
 -   *B = D(d) + vw^T*, which can be selected using `model = "diag_vwt"`
 -   *B = D(d) + vv^T*, which can be selected using `model = "diag_vvt"`
--   *B = D(d) + ^T*, which can be selected using `model = "diag_a11t"`
+-   *B = D(d) + alpha 11^T*, which can be selected using
+    `model = "diag_a11t"`
 
-We also have two goal functions, attempting to minimize either the sum
-of squared deviations (OLS, selected using `goal = "SSQ"`), or the
-weighted sum of the squared deviations (WLS, selected using
-`goalf = "WLS"`). Options also allow to :
+We can also choose between two goal functions, attempting to minimize
+either the sum of squared deviations (OLS, selected using
+`goal = "SSQ"`), or the weighted sum of the squared deviations (WLS,
+selected using `goalf = "WLS"`).
+
+Other options allow to :
 
 -   `pars = "NULL` by default, the parameters are initialized with *B =
     I* for all models. The user can provide alternative parameters
@@ -84,8 +87,10 @@ the row number of the data to be excluded. All communities of the same
 type will be excluded as well. For example, in the file
 `kuebbing_2015_non_natives.csv`, row 22 contains a replicate of the
 community `as + fa`. By selecting this row, all communities of the same
-type are excluded from the fit. When plotting, the out-of-fit prediction
-has colored boxplots, while the in-fit data is plotted in white:
+type are excluded from the fit.
+
+When plotting, the out-of-fit prediction is reported using colored
+boxplots, while the in-fit data is plotted in white:
 
 ``` r
 source("general.R")

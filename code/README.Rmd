@@ -10,9 +10,11 @@ As detailed in the manuscript, we derive five nested versions of the model:
 - *B* arbitrary, which can be selected using `model = "full"`
 - *B = D(d) + vw^T*, which can be selected using `model = "diag_vwt"`
 - *B = D(d) + vv^T*, which can be selected using `model = "diag_vvt"`
-- *B = D(d) + \alpha 11^T*, which can be selected using `model = "diag_a11t"`
+- *B = D(d) + alpha 11^T*, which can be selected using `model = "diag_a11t"`
 
-We also have two goal functions, attempting to minimize either the sum of squared deviations (OLS, selected using `goal = "SSQ"`), or the weighted sum of the squared deviations (WLS, selected using `goalf = "WLS"`). Options also allow to :
+We can also choose between two goal functions, attempting to minimize either the sum of squared deviations (OLS, selected using `goal = "SSQ"`), or the weighted sum of the squared deviations (WLS, selected using `goalf = "WLS"`). 
+
+Other options allow to :
 
 - `pars = "NULL` by default, the parameters are initialized with *B = I* for all models. The user can provide alternative parameters instead.
 - `skipEM = FALSE` skip the iterative algorithm and perform the numerical search directly.
@@ -33,7 +35,9 @@ run_model(datafile = "../data/kuebbing_2015_non_natives.csv", # location of the 
 
 ## Out-of-fit predictions
 
-The model can be fitted using part of the data, and then the parameters used to predict the whole data set, including the data that was not used to fit the model. To implement a simple Leave-One-Out approach, one can call `run_model_LOO`, with an extra parameter, `LOO_row_num`. This is the row number of the data to be excluded. All communities of the same type will be excluded as well. For example, in the file `kuebbing_2015_non_natives.csv`, row 22 contains a replicate of the community `as + fa`. By selecting this row, all communities of the same type are excluded from the fit. When plotting, the out-of-fit prediction has colored boxplots, while the in-fit data is plotted in white:
+The model can be fitted using part of the data, and then the parameters used to predict the whole data set, including the data that was not used to fit the model. To implement a simple Leave-One-Out approach, one can call `run_model_LOO`, with an extra parameter, `LOO_row_num`. This is the row number of the data to be excluded. All communities of the same type will be excluded as well. For example, in the file `kuebbing_2015_non_natives.csv`, row 22 contains a replicate of the community `as + fa`. By selecting this row, all communities of the same type are excluded from the fit. 
+
+When plotting, the out-of-fit prediction is reported using colored boxplots, while the in-fit data is plotted in white:
 
 ```{r, warning=FALSE, message=FALSE}
 source("general.R")
