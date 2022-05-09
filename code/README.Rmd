@@ -1,0 +1,48 @@
+---
+title: "Test code"
+output: github_document
+---
+
+## Fitting the models
+
+As detailed in the manuscript, we derive five nested versions of the model:
+
+- *B* arbitrary, which can be selected using `model = "full"`
+- *B = D(d) + vw^T*, which can be selected using `model = "diag_vwt"`
+- *B = D(d) + vv^T*, which can be selected using `model = "diag_vvt"`
+- *B = D(d) + \alpha 11^T*, which can be selected using `model = "diag_a11t"`
+
+We also have two goal functions, attempting to minimize either the sum of squared deviations (OLS, selected using `goal = "SSQ"`), or the weighted sum of the squared deviations (WLS, selected using `goalf = "WLS"`). Options also allow to :
+
+- `pars = "NULL` by default, the parameters are initialized with *B = I* for all models. The user can provide alternative parameters instead.
+- `skipEM = FALSE` skip the iterative algorithm and perform the numerical search directly.
+- `plot_results = TRUE` plot the results at the end of the calculation.
+
+For example, to fit the data by Kuebbing et al. (2015), non-native species, using OLS and the simplified model *B = D(d) + vw^T*, one can invoke:
+
+```{r, warning=FALSE, message=FALSE}
+source("general.R")
+run_model(datafile = "../data/kuebbing_2015_non_natives.csv", # location of the data
+          model = "diag_vwt", # one of "diag_a11t", "diag_vvt", "diag_vwt", or "full"
+          goalf = "SSQ", # one of SSQ, WLS
+          pars = NULL, # pre-computed parameters; otherwise use the identity matrix
+          skipEM = FALSE, # skip the iterative algorithm
+          plot_results = TRUE # plot the results as boxplots
+          )
+```
+
+## Out-of-fit predictions
+
+The model can be fitted using part of the data, and then the parameters used to predict the whole data set, including the data that was not used to fit the model. To implement a simple Leave-One-Out approach, one can call `run_model_LOO`, with an extra parameter, `LOO_row_num`. This is the row number of the data to be excluded. All communities of the same type will be excluded as well. For example, in the file `kuebbing_2015_non_natives.csv`, row 22 contains a replicate of the community `as + fa`. By selecting this row, all communities of the same type are excluded from the fit. When plotting, the out-of-fit prediction has colored boxplots, while the in-fit data is plotted in white:
+
+```{r, warning=FALSE, message=FALSE}
+source("general.R")
+run_model_LOO(datafile = "../data/kuebbing_2015_non_natives.csv", # location of the data
+          model = "diag_vwt", # one of "diag_a11t", "diag_vvt", "diag_vwt", or "full"
+          goalf = "WLS", # one of SSQ, WLS
+          LOO_row_num = 22, # exclude all replicates of as + fa from the fit
+          pars = NULL, # pre-computed parameters; otherwise use the identity matrix
+          skipEM = FALSE, # skip the iterative algorithm
+          plot_results = TRUE # plot the results as boxplots
+          )
+```

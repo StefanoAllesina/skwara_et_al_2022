@@ -1,2 +1,7 @@
-# skwara_et_al_2022
-Code and data accompanying "Modeling ecological communities when composition is manipulated experimentally", by Skwara et al., 2022
+# Modeling ecological communities when composition is manipulated experimentally
+
+*Abigail Skwara, Paula Lemos-Costa, Zachary R. Miller and Stefano Allesina*
+
+## Data
+
+## 
