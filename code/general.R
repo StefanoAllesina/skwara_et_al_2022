@@ -28,17 +28,20 @@ EM_step <- function(pars, E, Evar, emmaxit = 500, momentum = 0){
   return(pars)
 }
 
-minimize_given_pars <- function(pars, E, Evar, return_pred = FALSE, use_penalization = TRUE){
-  X <- get_X(pars = pars, E = E)
+minimize_given_pars <- function(pars, E, Evar, D, replicates, return_pred = FALSE, use_penalization = TRUE){
+  X <- get_X(pars = pars, E = D)
+  X <- X[replicates, ]
   return(goal_function(X = X, E = E, Evar = Evar, return_pred = return_pred, use_penalization = use_penalization))
 }
 
-brute_force <- function(pars, E, Evar){
+brute_force <- function(pars, E, Evar, D, replicates){
   tmp <- list(par = pars)
   for (i in 1:6){
-    tmp <- optim(par = tmp$par, fn = minimize_given_pars, E = E, Evar = Evar, method = "Nelder-Mead",
+    tmp <- optim(par = tmp$par, fn = minimize_given_pars, E = E, Evar = Evar, D = D, replicates = replicates,
+                 method = "Nelder-Mead",
                  control = list(maxit = 2500, trace = FALSE))
-    tmp <- optim(par = tmp$par, fn = minimize_given_pars, E = E, Evar = Evar, method = "BFGS",
+    tmp <- optim(par = tmp$par, fn = minimize_given_pars, E = E, Evar = Evar, D = D, replicates = replicates,
+                 method = "BFGS",
                  control = list(maxit = 2500, trace = FALSE))
     print(tmp$value)
   }
@@ -53,8 +56,9 @@ compute_variances <- function(E){
   return(Evar)
 }
 
-single_run <- function(pars, E, Evar, skipEM, outfile, optimstep = 500){
-  X <- get_X(E, pars)
+single_run <- function(pars, E, Evar, D, replicates, skipEM, outfile, optimstep = 500){
+  X <- get_X(D, pars)
+  X <- X[replicates, ]
   # store goal function here (to be minimized)
   res <- goal_function(X = X, E = E, Evar = Evar, return_pred = FALSE, use_penalization = FALSE)
   # store best parameters found so far
@@ -64,7 +68,7 @@ single_run <- function(pars, E, Evar, skipEM, outfile, optimstep = 500){
     # this is the EM
     for (i in 1:25){
       pars <- EM_step(pars = pars, E = E, Evar = Evar, emmaxit = optimstep + i * optimstep / 10, momentum = 0.)
-      res <- c(res, minimize_given_pars(pars = pars, E = E, Evar = Evar, return_pred = FALSE, use_penalization = FALSE))
+      res <- c(res, minimize_given_pars(pars = pars, E = E, Evar = Evar, D = D, replicates = replicates, return_pred = FALSE, use_penalization = FALSE))
       P <- get_P(E, pars)
       if (res[i+1] < bestres){
         bestpars <- pars
@@ -76,11 +80,9 @@ single_run <- function(pars, E, Evar, skipEM, outfile, optimstep = 500){
   }
   print("numerical search")
   # now optimize numerically
-  pars <- brute_force(pars = bestpars, E = E, Evar = Evar)
-  res <- c(res, minimize_given_pars(pars = pars, E = E, Evar = Evar, return_pred = FALSE))
-  
-  Epred <- minimize_given_pars(pars = pars, E = E, Evar = Evar, return_pred = TRUE)
-  
+  pars <- brute_force(pars = bestpars, E = E, Evar = Evar, D = D, replicates = replicates)
+  res <- c(res, minimize_given_pars(pars = pars, E = E, Evar = Evar,  D = D, replicates = replicates, return_pred = FALSE))
+  Epred <- minimize_given_pars(pars = pars, E = E, Evar = Evar,  D = D, replicates = replicates, return_pred = TRUE)
   # save results
   output <- list(
     data_name = outfile,
@@ -89,7 +91,7 @@ single_run <- function(pars, E, Evar, skipEM, outfile, optimstep = 500){
     variances = Evar,
     B = get_B(pars),
     pars = pars,
-    goal_function = minimize_given_pars(pars = pars, E = E, Evar = Evar, return_pred = FALSE),
+    goal_function = minimize_given_pars(pars = pars, E = E, Evar = Evar, D = D, replicates = replicates, return_pred = FALSE),
     goal_type = goal_type
   )
   return(output)
@@ -111,13 +113,17 @@ run_model <- function(datafile, # location of the data
   E <- read.csv(datafile) %>% as.matrix()
   n <- ncol(E)
   E <- E / mean(E[E>0])
-  # compute variances
-  Evar <- compute_variances(E)
-  
   # base name for output
   outfile <- tools::file_path_sans_ext(basename(datafile))
-  
-  set.seed(1)
+  # reorder the matrix by community
+  community <- apply((E > 0) * 1, 1, paste, collapse = "")
+  E <- E[order(community),]
+  community <- community[order(community)]
+  # compute variances
+  Evar <- compute_variances(E)
+  # compute design matrix D, and identify replicates
+  D <- unique((E > 0) * 1)
+  replicates <- as.numeric(as.factor(community))
   # if parameters are not provided, use the identity matrix
   if(is.null(pars)){
     if (model == "diag_a11t") pars <- c(rep(1,n), 0)
@@ -125,9 +131,10 @@ run_model <- function(datafile, # location of the data
     if (model == "diag_vwt") pars <- c(rep(1,n), rep(0, 2 * n))
     if (model == "full") pars <- as.vector(diag(rep(1,n)))
   }
-  output <- single_run(pars = pars, E = E, Evar = Evar, skipEM = skipEM, outfile = outfile)
+  output <- single_run(pars = pars, E = E, Evar = Evar, D = D, replicates = replicates, skipEM = skipEM, outfile = outfile)
   if (plot_results) show(plot_results_boxplot(output$observed, output$predicted))
   save(output, file = paste0("results/", model, "_", outfile,"_", goal_type, ".Rdata"))
+  return(output)
 }
 
 run_model_LOO <- function(datafile, # location of the data
@@ -147,32 +154,41 @@ run_model_LOO <- function(datafile, # location of the data
   E <- read.csv(datafile) %>% as.matrix()
   n <- ncol(E)
   E <- E / mean(E[E>0])
-  # compute variances
-  Evar <- compute_variances(E)
-  
   # base name for output
   outfile <- tools::file_path_sans_ext(basename(datafile))
-  
+  # reorder the matrix by community
+  community <- apply((E > 0) * 1, 1, paste, collapse = "")
+  E <- E[order(community),]
+  community <- community[order(community)]
+  D <- unique((E > 0) * 1)
+  replicates <- as.integer(as.factor(community))
+  # compute variances
+  Evar <- compute_variances(E)
   # now identify community to leave out
   labelcomm <- apply((E>0) * 1, 1, paste, collapse = "")
   infit <- labelcomm != labelcomm[LOO_row_num]
-  
-  
   Einfit <- E[infit == TRUE, , drop = FALSE]
   Evarinfit <- Evar[infit == TRUE, , drop = FALSE]
-  # run with identity matrix
-  set.seed(1)
+  comminfit <- apply((Einfit > 0) * 1, 1, paste, collapse = "")
+  Dinfit <- unique((Einfit > 0) * 1)
+  replicatesinfit <- as.numeric(as.factor(comminfit))
+  
   # first run: identity matrix
   if (model == "diag_a11t") pars <- c(rep(1,n), 0)
   if (model == "diag_vvt") pars <- c(rep(1,n), rep(0, n))
   if (model == "diag_vwt") pars <- c(rep(1,n), rep(0, 2 * n))
   if (model == "full") pars <- as.vector(diag(rep(1,n)))
   
-  output <- single_run(pars = pars, E = Einfit, Evar = Evarinfit, skipEM = FALSE, outfile = outfile)
+  output <- single_run(pars = pars, 
+                       D = Dinfit, replicates = replicatesinfit,
+                       E = Einfit, 
+                       Evar = Evarinfit, skipEM = FALSE, outfile = outfile)
   pars <- output$pars
   
   # now that we have the best parameters, get predictions for the whole data
-  Epred <- minimize_given_pars(pars = pars, E = E, Evar = Evar, return_pred = TRUE)
+  source("model_full.R")
+  Epred <- minimize_given_pars(pars = as.vector(output$B), E = E, D = D, replicates = replicates,
+                               Evar = Evar, return_pred = TRUE)
   
   # save results
   output <- list(
@@ -183,12 +199,14 @@ run_model_LOO <- function(datafile, # location of the data
     B = get_B(pars),
     pars = pars,
     infit = infit,
-    goal_function = minimize_given_pars(pars = pars, E = E, Evar = Evar, return_pred = FALSE),
+    goal_function = minimize_given_pars(pars = as.vector(output$B), E = E, D = D, replicates = replicates,
+                                        Evar = Evar, return_pred = TRUE),
     goal_type = goal_type
   )
   
   
   if (plot_results) show(plot_results_boxplot(output$observed, output$predicted, output$infit))
   save(output, file = paste0("results/", model, "_", outfile,"_", goal_type, "_LOO_", LOO_row_num, ".Rdata"))
+  return(output)
 }
 

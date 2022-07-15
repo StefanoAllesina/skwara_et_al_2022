@@ -24,13 +24,14 @@ For example, to fit the data by Kuebbing et al. (2015), non-native species, usin
 
 ```{r, warning=FALSE, message=FALSE}
 source("general.R")
-run_model(datafile = "../data/kuebbing_2015_non_natives.csv", # location of the data
+res <- run_model(datafile = "../data/kuebbing_2015_non_natives.csv", # location of the data
           model = "diag_vwt", # one of "diag_a11t", "diag_vvt", "diag_vwt", or "full"
           goalf = "SSQ", # one of SSQ, WLS
           pars = NULL, # pre-computed parameters; otherwise use the identity matrix
           skipEM = FALSE, # skip the iterative algorithm
           plot_results = TRUE # plot the results as boxplots
           )
+str(res)
 ```
 
 ## Out-of-fit predictions
@@ -41,7 +42,7 @@ When plotting, the out-of-fit prediction is reported using colored boxplots, whi
 
 ```{r, warning=FALSE, message=FALSE}
 source("general.R")
-run_model_LOO(datafile = "../data/kuebbing_2015_non_natives.csv", # location of the data
+res <- run_model_LOO(datafile = "../data/kuebbing_2015_non_natives.csv", # location of the data
           model = "diag_vwt", # one of "diag_a11t", "diag_vvt", "diag_vwt", or "full"
           goalf = "WLS", # one of SSQ, WLS
           LOO_row_num = 22, # exclude all replicates of as + fa from the fit

@@ -33,7 +33,7 @@ invoke:
 
 ``` r
 source("general.R")
-run_model(datafile = "../data/kuebbing_2015_non_natives.csv", # location of the data
+res <- run_model(datafile = "../data/kuebbing_2015_non_natives.csv", # location of the data
           model = "diag_vwt", # one of "diag_a11t", "diag_vvt", "diag_vwt", or "full"
           goalf = "SSQ", # one of SSQ, WLS
           pars = NULL, # pre-computed parameters; otherwise use the identity matrix
@@ -77,6 +77,29 @@ run_model(datafile = "../data/kuebbing_2015_non_natives.csv", # location of the 
 
 ![](README_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
+``` r
+str(res)
+```
+
+    ## List of 8
+    ##  $ data_name    : chr "kuebbing_2015_non_natives"
+    ##  $ observed     : num [1:140, 1:4] 0 0 0 0 0 0 0 0 0 0 ...
+    ##   ..- attr(*, "dimnames")=List of 2
+    ##   .. ..$ : NULL
+    ##   .. ..$ : chr [1:4] "as" "fa" "la" "po"
+    ##  $ predicted    : num [1:140, 1:4] 0 0 0 0 0 0 0 0 0 0 ...
+    ##   ..- attr(*, "dimnames")=List of 2
+    ##   .. ..$ : NULL
+    ##   .. ..$ : chr [1:4] "as" "fa" "la" "po"
+    ##  $ variances    : num [1:140, 1:4] 0 0 0 0 0 0 0 0 0 0 ...
+    ##   ..- attr(*, "dimnames")=List of 2
+    ##   .. ..$ : NULL
+    ##   .. ..$ : chr [1:4] "as" "fa" "la" "po"
+    ##  $ B            : num [1:4, 1:4] 1.064 0.836 0.867 0.835 0.202 ...
+    ##  $ pars         : num [1:12] 4.4 20.3 4.96 3.1 1.65 ...
+    ##  $ goal_function: num 29.9
+    ##  $ goal_type    : chr "SSQ"
+
 ## Out-of-fit predictions
 
 The model can be fitted using part of the data, and then the parameters
@@ -94,7 +117,7 @@ boxplots, while the in-fit data is plotted in white:
 
 ``` r
 source("general.R")
-run_model_LOO(datafile = "../data/kuebbing_2015_non_natives.csv", # location of the data
+res <- run_model_LOO(datafile = "../data/kuebbing_2015_non_natives.csv", # location of the data
           model = "diag_vwt", # one of "diag_a11t", "diag_vvt", "diag_vwt", or "full"
           goalf = "WLS", # one of SSQ, WLS
           LOO_row_num = 22, # exclude all replicates of as + fa from the fit
@@ -104,37 +127,37 @@ run_model_LOO(datafile = "../data/kuebbing_2015_non_natives.csv", # location of 
           )
 ```
 
-    ## [1] "iterative step 1 -> 644.094376223836"
-    ## [1] "iterative step 2 -> 576.48941099368"
-    ## [1] "iterative step 3 -> 422.402096274447"
-    ## [1] "iterative step 4 -> 422.402096274447"
-    ## [1] "iterative step 5 -> 313.974067213791"
-    ## [1] "iterative step 6 -> 313.974067213791"
-    ## [1] "iterative step 7 -> 313.974067213791"
-    ## [1] "iterative step 8 -> 313.974067213791"
-    ## [1] "iterative step 9 -> 313.974067213791"
-    ## [1] "iterative step 10 -> 313.974067213791"
-    ## [1] "iterative step 11 -> 313.974067213791"
-    ## [1] "iterative step 12 -> 313.974067213791"
-    ## [1] "iterative step 13 -> 313.974067213791"
-    ## [1] "iterative step 14 -> 313.974067213791"
-    ## [1] "iterative step 15 -> 313.974067213791"
-    ## [1] "iterative step 16 -> 313.974067213791"
-    ## [1] "iterative step 17 -> 313.974067213791"
-    ## [1] "iterative step 18 -> 313.974067213791"
-    ## [1] "iterative step 19 -> 313.974067213791"
-    ## [1] "iterative step 20 -> 313.974067213791"
-    ## [1] "iterative step 21 -> 313.974067213791"
-    ## [1] "iterative step 22 -> 313.974067213791"
-    ## [1] "iterative step 23 -> 313.974067213791"
-    ## [1] "iterative step 24 -> 313.974067213791"
-    ## [1] "iterative step 25 -> 313.974067213791"
+    ## [1] "iterative step 1 -> 621.808110694175"
+    ## [1] "iterative step 2 -> 621.808110694175"
+    ## [1] "iterative step 3 -> 599.913139473817"
+    ## [1] "iterative step 4 -> 384.2634314538"
+    ## [1] "iterative step 5 -> 357.417389231598"
+    ## [1] "iterative step 6 -> 311.892906469798"
+    ## [1] "iterative step 7 -> 311.892906469798"
+    ## [1] "iterative step 8 -> 289.171194810318"
+    ## [1] "iterative step 9 -> 285.761608937196"
+    ## [1] "iterative step 10 -> 285.574791134673"
+    ## [1] "iterative step 11 -> 285.574791134673"
+    ## [1] "iterative step 12 -> 285.574791134673"
+    ## [1] "iterative step 13 -> 285.574791134673"
+    ## [1] "iterative step 14 -> 285.574791134673"
+    ## [1] "iterative step 15 -> 285.574791134673"
+    ## [1] "iterative step 16 -> 285.574791134673"
+    ## [1] "iterative step 17 -> 285.574791134673"
+    ## [1] "iterative step 18 -> 285.574791134673"
+    ## [1] "iterative step 19 -> 285.574791134673"
+    ## [1] "iterative step 20 -> 285.574791134673"
+    ## [1] "iterative step 21 -> 285.574791134673"
+    ## [1] "iterative step 22 -> 285.574791134673"
+    ## [1] "iterative step 23 -> 285.574791134673"
+    ## [1] "iterative step 24 -> 285.574791134673"
+    ## [1] "iterative step 25 -> 285.574791134673"
     ## [1] "numerical search"
-    ## [1] 256.6098
-    ## [1] 256.6098
-    ## [1] 256.6098
-    ## [1] 256.6098
-    ## [1] 256.6098
-    ## [1] 256.6098
+    ## [1] 260.4811
+    ## [1] 260.4811
+    ## [1] 260.4811
+    ## [1] 260.4811
+    ## [1] 260.4811
+    ## [1] 260.4811
 
 ![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
