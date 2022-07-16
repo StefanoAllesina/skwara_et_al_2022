@@ -107,6 +107,8 @@ run_model <- function(datafile, # location of the data
   # load goal function
   if (goalf == "SSQ") source("ssq.R")
   if (goalf == "WLS") source("wls.R")
+  if (goalf == "GammaGLM") source("gamma.R")
+  if (goalf == "IG") source("invgauss.R")
   # load model structure
   source(paste0("model_", model, ".R"))
   # read the data
