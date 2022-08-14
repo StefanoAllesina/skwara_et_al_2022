@@ -107,14 +107,12 @@ run_model <- function(datafile, # location of the data
   # load goal function
   if (goalf == "SSQ") source("ssq.R")
   if (goalf == "WLS") source("wls.R")
-  if (goalf == "GammaGLM") source("gamma.R")
-  if (goalf == "IG") source("invgauss.R")
   # load model structure
   source(paste0("model_", model, ".R"))
   # read the data
   E <- read.csv(datafile) %>% as.matrix()
   n <- ncol(E)
-  E <- E / mean(E[E>0])
+  #E <- E / mean(E[E>0])
   # base name for output
   outfile <- tools::file_path_sans_ext(basename(datafile))
   # reorder the matrix by community

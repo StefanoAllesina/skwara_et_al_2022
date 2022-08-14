@@ -12,7 +12,7 @@ goal_function <- function(X, E, Evar, return_pred = FALSE, use_penalization = TR
   penalization <- 0
   if (use_penalization){
     # penalize for negative predictions
-    penalization <- sum(vX < 0) * max(E) * 1000 - sum(vX[vX < 0])
+    penalization <- sum(vX < 0) * max(E) * 100000 - sum(vX[vX < 0])
     vX <- abs(vX)
   }
   # compute weighted sum of squares
