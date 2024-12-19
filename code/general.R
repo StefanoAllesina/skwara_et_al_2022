@@ -107,6 +107,7 @@ run_model <- function(datafile, # location of the data
   # load goal function
   if (goalf == "SSQ") source("ssq.R")
   if (goalf == "WLS") source("wls.R")
+  if (goalf == "LikLN") source("LikLN.R")
   # load model structure
   source(paste0("model_", model, ".R"))
   # read the data
@@ -149,6 +150,7 @@ run_model_LOO <- function(datafile, # location of the data
   # load goal function
   if (goalf == "SSQ") source("ssq.R")
   if (goalf == "WLS") source("wls.R")
+  if (goalf == "LikLN") source("LikLN.R")
   # load model structure
   source(paste0("model_", model, ".R"))
   # read the data
