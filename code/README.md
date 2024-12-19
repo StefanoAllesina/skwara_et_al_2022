@@ -42,38 +42,38 @@ res <- run_model(datafile = "../data/kuebbing_2015_non_natives.csv", # location 
           )
 ```
 
-    ## [1] "iterative step 1 -> 67.0062462911419"
-    ## [1] "iterative step 2 -> 58.1125868909348"
-    ## [1] "iterative step 3 -> 52.831579796576"
-    ## [1] "iterative step 4 -> 48.1614107930199"
-    ## [1] "iterative step 5 -> 43.7510941997679"
-    ## [1] "iterative step 6 -> 40.7931051934239"
-    ## [1] "iterative step 7 -> 38.7693436324155"
-    ## [1] "iterative step 8 -> 37.3940743308755"
-    ## [1] "iterative step 9 -> 36.3404144951679"
-    ## [1] "iterative step 10 -> 35.9586264383472"
-    ## [1] "iterative step 11 -> 34.918386145092"
-    ## [1] "iterative step 12 -> 34.495479516673"
-    ## [1] "iterative step 13 -> 34.0632653666747"
-    ## [1] "iterative step 14 -> 33.7667109953849"
-    ## [1] "iterative step 15 -> 33.3999522502816"
-    ## [1] "iterative step 16 -> 33.23408137218"
-    ## [1] "iterative step 17 -> 32.9573872515676"
-    ## [1] "iterative step 18 -> 32.7704882115572"
-    ## [1] "iterative step 19 -> 32.5549861467456"
-    ## [1] "iterative step 20 -> 32.3779777912159"
-    ## [1] "iterative step 21 -> 32.2017947003788"
-    ## [1] "iterative step 22 -> 32.0677438786954"
-    ## [1] "iterative step 23 -> 32.0020931017848"
-    ## [1] "iterative step 24 -> 31.9375212099102"
-    ## [1] "iterative step 25 -> 31.7738898224771"
+    ## [1] "iterative step 1 -> 990.888949636642"
+    ## [1] "iterative step 2 -> 629.642704358945"
+    ## [1] "iterative step 3 -> 504.921563372439"
+    ## [1] "iterative step 4 -> 418.84452081321"
+    ## [1] "iterative step 5 -> 376.117486397484"
+    ## [1] "iterative step 6 -> 354.227370774127"
+    ## [1] "iterative step 7 -> 335.004319289932"
+    ## [1] "iterative step 8 -> 315.039958827847"
+    ## [1] "iterative step 9 -> 299.682234330772"
+    ## [1] "iterative step 10 -> 287.845924104116"
+    ## [1] "iterative step 11 -> 273.910497474283"
+    ## [1] "iterative step 12 -> 267.045959348568"
+    ## [1] "iterative step 13 -> 263.598770503308"
+    ## [1] "iterative step 14 -> 254.381567707855"
+    ## [1] "iterative step 15 -> 254.27602348795"
+    ## [1] "iterative step 16 -> 248.602828117017"
+    ## [1] "iterative step 17 -> 245.998972247379"
+    ## [1] "iterative step 18 -> 244.141377327376"
+    ## [1] "iterative step 19 -> 240.220213084485"
+    ## [1] "iterative step 20 -> 240.061305491651"
+    ## [1] "iterative step 21 -> 239.159615031142"
+    ## [1] "iterative step 22 -> 237.378566693952"
+    ## [1] "iterative step 23 -> 237.109223060851"
+    ## [1] "iterative step 24 -> 234.948355492571"
+    ## [1] "iterative step 25 -> 234.42701216238"
     ## [1] "numerical search"
-    ## [1] 29.90851
-    ## [1] 29.90851
-    ## [1] 29.90851
-    ## [1] 29.90851
-    ## [1] 29.90851
-    ## [1] 29.90851
+    ## [1] 212.7557
+    ## [1] 212.7556
+    ## [1] 212.7556
+    ## [1] 212.7556
+    ## [1] 212.7556
+    ## [1] 212.7556
 
 ![](README_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
@@ -95,9 +95,9 @@ str(res)
     ##   ..- attr(*, "dimnames")=List of 2
     ##   .. ..$ : NULL
     ##   .. ..$ : chr [1:4] "as" "fa" "la" "po"
-    ##  $ B            : num [1:4, 1:4] 1.064 0.836 0.867 0.835 0.202 ...
-    ##  $ pars         : num [1:12] 4.4 20.3 4.96 3.1 1.65 ...
-    ##  $ goal_function: num 29.9
+    ##  $ B            : num [1:4, 1:4] 0.3984 0.314 0.3255 0.3134 0.0758 ...
+    ##  $ pars         : num [1:12] 11.95 54.39 13.3 8.3 -1.51 ...
+    ##  $ goal_function: num 213
     ##  $ goal_type    : chr "SSQ"
 
 ## Out-of-fit predictions

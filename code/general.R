@@ -36,13 +36,13 @@ minimize_given_pars <- function(pars, E, Evar, D, replicates, return_pred = FALS
 
 brute_force <- function(pars, E, Evar, D, replicates){
   tmp <- list(par = pars)
-  for (i in 1:6){
-    tmp <- optim(par = tmp$par, fn = minimize_given_pars, E = E, Evar = Evar, D = D, replicates = replicates,
-                 method = "Nelder-Mead",
-                 control = list(maxit = 2500, trace = FALSE))
+  for (i in 1:10){
     tmp <- optim(par = tmp$par, fn = minimize_given_pars, E = E, Evar = Evar, D = D, replicates = replicates,
                  method = "BFGS",
                  control = list(maxit = 2500, trace = FALSE))
+    tmp <- optim(par = tmp$par, fn = minimize_given_pars, E = E, Evar = Evar, D = D, replicates = replicates,
+                 method = "Nelder-Mead",
+                 control = list(maxit = 5000, trace = FALSE))
     print(tmp$value)
   }
   return(tmp$par)
@@ -112,7 +112,6 @@ run_model <- function(datafile, # location of the data
   # read the data
   E <- read.csv(datafile) %>% as.matrix()
   n <- ncol(E)
-  #E <- E / mean(E[E>0])
   # base name for output
   outfile <- tools::file_path_sans_ext(basename(datafile))
   # reorder the matrix by community
@@ -131,7 +130,9 @@ run_model <- function(datafile, # location of the data
     if (model == "diag_vwt") pars <- c(rep(1,n), rep(0, 2 * n))
     if (model == "full") pars <- as.vector(diag(rep(1,n)))
   }
-  output <- single_run(pars = pars, E = E, Evar = Evar, D = D, replicates = replicates, skipEM = skipEM, outfile = outfile)
+  output <- single_run(pars = pars, E = E, Evar = Evar, 
+                       D = D, replicates = replicates, 
+                       skipEM = skipEM, outfile = outfile)
   if (plot_results) show(plot_results_boxplot(output$observed, output$predicted))
   save(output, file = paste0("results/", model, "_", outfile,"_", goal_type, ".Rdata"))
   return(output)
@@ -153,7 +154,7 @@ run_model_LOO <- function(datafile, # location of the data
   # read the data
   E <- read.csv(datafile) %>% as.matrix()
   n <- ncol(E)
-  E <- E / mean(E[E>0])
+  #E <- E / mean(E[E>0])
   # base name for output
   outfile <- tools::file_path_sans_ext(basename(datafile))
   # reorder the matrix by community
@@ -182,12 +183,15 @@ run_model_LOO <- function(datafile, # location of the data
   output <- single_run(pars = pars, 
                        D = Dinfit, replicates = replicatesinfit,
                        E = Einfit, 
-                       Evar = Evarinfit, skipEM = FALSE, outfile = outfile)
+                       Evar = Evarinfit, skipEM = skipEM, outfile = outfile)
+  
+  output2 <- minimize_given_pars(pars = as.vector((output$B)), E = Einfit, D = Dinfit, replicates = replicatesinfit,
+                                 Evar = Evarinfit, return_pred = TRUE)
   pars <- output$pars
   
   # now that we have the best parameters, get predictions for the whole data
   source("model_full.R")
-  Epred <- minimize_given_pars(pars = as.vector(output$B), E = E, D = D, replicates = replicates,
+  Epred <- minimize_given_pars(pars = as.vector(solve(output$B)), E = E, D = D, replicates = replicates,
                                Evar = Evar, return_pred = TRUE)
   
   # save results

@@ -4,7 +4,7 @@ plot_results_boxplot <- function(E, Epred, inout = NULL){
   if (is.null(inout)) inout <- rep(FALSE, nrow(Epred))
   # input E Epred (optional) inout
   spnames <- colnames(E)
-  spnames <- sapply(spnames, substr, 1, 3)
+  #spnames <- sapply(spnames, substr, 1, 6)
   colnames(E) <- spnames
   colnames(Epred) <- spnames
   presence <- E > 0
@@ -19,7 +19,8 @@ plot_results_boxplot <- function(E, Epred, inout = NULL){
   tmp <- tmp %>% filter(observed > 0)
   pl <- tmp %>% 
     ggplot(aes(x = species, y = observed, colour = species)) +
-    facet_wrap(~community, scales = "free") + 
+    facet_wrap(~community, scales = "free_y") + 
+    #facet_wrap(~community) + 
     geom_boxplot(aes(alpha = 0.6 - 0.2 * inout, fill = species)) + 
     stat_summary(fun = mean, geom="point", shape=2, size=5) +
     geom_point() + 
