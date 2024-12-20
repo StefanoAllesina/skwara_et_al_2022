@@ -187,8 +187,6 @@ run_model_LOO <- function(datafile, # location of the data
                        E = Einfit, 
                        Evar = Evarinfit, skipEM = skipEM, outfile = outfile)
   
-  output2 <- minimize_given_pars(pars = as.vector((output$B)), E = Einfit, D = Dinfit, replicates = replicatesinfit,
-                                 Evar = Evarinfit, return_pred = TRUE)
   pars <- output$pars
   
   # now that we have the best parameters, get predictions for the whole data
@@ -202,11 +200,11 @@ run_model_LOO <- function(datafile, # location of the data
     observed = E,
     predicted = Epred,
     variances = Evar,
-    B = get_B(pars),
+    B = output$B,
     pars = pars,
     infit = infit,
-    goal_function = minimize_given_pars(pars = as.vector(output$B), E = E, D = D, replicates = replicates,
-                                        Evar = Evar, return_pred = TRUE),
+    goal_function = minimize_given_pars(pars = as.vector(solve(output$B)), E = E, D = D, replicates = replicates,
+                                        Evar = Evar),
     goal_type = goal_type
   )
   
